@@ -12,16 +12,14 @@ if ARGV.size > 0
   end
 end
 
-def extract_dependency(dependency : String)
-  Dependency
+def extract_dependency(dependency : String) : Dependency
   repoUrl = dependency.downcase
   if (
        repoUrl.includes? "https://github.com/"
      )
-    repoUrl = repoUrl.lchop("https://github.com/")
     return Dependency.new(
       source = "github",
-      authorSlashLibrary = repoUrl
+      authorSlashLibrary = repoUrl.lchop("https://github.com/")
     )
   end
 end
