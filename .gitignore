@@ -1,0 +1,7 @@
+.vscode
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+*.exe
