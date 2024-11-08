@@ -1,3 +1,4 @@
 record Dependency,
   source : String,
-  authorSlashLibrary : String
+  author : String,
+  library : String
