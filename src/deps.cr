@@ -10,7 +10,6 @@ def extract_dependency(dependency : String) : Dependency | Nil
     if (
          repo_url.includes? repo_root
        )
-      puts repo_url, "contains", repo_root
       author_slash_library = repo_url.lchop(repo_root).split("/")
       return Dependency.new(
         source = determine_source(repo_root),
