@@ -13,6 +13,7 @@ if ARGV.size > 0
     inner_hash[YAML::Any.new("github")] = YAML::Any.new(dep.author + "/" + dep.library)
     hash[YAML::Any.new(dep.library)] = YAML::Any.new(inner_hash)
     yaml[YAML::Any.new("dependencies")] = YAML::Any.new(hash)
+
     puts yaml.to_yaml
   rescue e : Exception
     puts "Something went wrong: ", e
