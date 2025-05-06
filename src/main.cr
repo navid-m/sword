@@ -308,7 +308,7 @@ end
 
 case ARGV[0]?
 when "up"
-    update_and_prune()
+    update_and_prune
 when "tidy"
     if !prune()
         print_error "Shards executable was not available, nothing tidied."
@@ -316,6 +316,10 @@ when "tidy"
 when "b"
     build_args = ARGV.size > 1 ? ARGV[1..] : [] of String
     build_project(build_args)
+when "br"
+    build_project_release
+when "bs"
+    build_project_static
 when "get"
     if ARGV.size < 2
         print_error "Usage: sword get <package-url> [version]"
@@ -350,13 +354,13 @@ when "info"
     end
     fetch_shard_info(ARGV[1])
 when "clean"
-    clean_cache()
+    clean_cache
 when "version"
-    show_version()
+    show_version
 when "help", nil
-    show_help()
+    show_help
 else
     print_error "Unknown command: #{ARGV[0]}"
-    show_help()
+    show_help
     exit 1
 end
