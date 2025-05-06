@@ -213,9 +213,13 @@ def add_dependency(url : String, version : String? = nil)
         dep_entry[YAML::Any.new("version")] = YAML::Any.new(version)
     end
 
-    deps[dep_name_key] = YAML::Any.new(dep_entry)
-    yaml[deps_key] = YAML::Any.new(deps)
-    File.write(PKGFILE, YAML::Any.new(yaml).to_yaml)
+    deps[dep_name_key]  = YAML::Any.new(dep_entry)
+    yaml[deps_key]      = YAML::Any.new(deps)
+
+    File.write(
+        PKGFILE,
+        YAML::Any.new(yaml).to_yaml
+    )
 
     print_success "Added dependency #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}#{version ? " with version #{version}" : ""}."
 
