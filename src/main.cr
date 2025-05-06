@@ -195,10 +195,10 @@ def fetch_github_info(repo : String, name : String)
             return
         end
 
-        repo_data = JSON.parse(repo_response.body)
+        repo_data        = JSON.parse(repo_response.body)
         content_response = HTTP::Client.get(
-        "https://api.github.com/repos/#{repo}/contents/shard.yml",
-        headers: HTTP::Headers{"Accept" => "application/vnd.github.v3+json"}
+            "https://api.github.com/repos/#{repo}/contents/shard.yml",
+            headers: HTTP::Headers{"Accept" => "application/vnd.github.v3+json"}
         )
 
         shard_data = {} of String => String
