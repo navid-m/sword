@@ -5,6 +5,7 @@ require "http/client"
 require "colorize"
 require "file_utils"
 require "../src/logs"
+require "../src/dirs"
 require "../src/shard_interop"
 
 PKGFILE     = "shard.yml"
@@ -16,21 +17,6 @@ HOSTS       = {
 }
 
 FileUtils.mkdir_p(CACHEDIR) unless Dir.exists?(CACHEDIR)
-
-def get_home_directory
-    case
-    when ENV.has_key?("HOME")
-        ENV["HOME"]
-    when ENV.has_key?("USERPROFILE")
-        ENV["USERPROFILE"]
-    else
-        if ENV.has_key?("HOMEDRIVE") && ENV.has_key?("HOMEPATH")
-            "#{ENV["HOMEDRIVE"]}#{ENV["HOMEPATH"]}"
-        else
-            raise "Could not determine home directory"
-        end
-    end
-end
 
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
     uri = URI.parse(url)
