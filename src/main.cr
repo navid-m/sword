@@ -186,8 +186,8 @@ end
 def fetch_github_info(repo : String, name : String)
     begin
         repo_response = HTTP::Client.get(
-        "https://api.github.com/repos/#{repo}",
-        headers: HTTP::Headers{"Accept" => "application/vnd.github.v3+json"}
+            "https://api.github.com/repos/#{repo}",
+            headers: HTTP::Headers{"Accept" => "application/vnd.github.v3+json"}
         )
 
         if repo_response.status_code != 200
@@ -248,7 +248,7 @@ def fetch_gitlab_info(repo : String, name : String)
     begin
         repo_encoded = URI.encode_www_form(repo)
         repo_response = HTTP::Client.get(
-        "https://gitlab.com/api/v4/projects/#{repo_encoded}"
+            "https://gitlab.com/api/v4/projects/#{repo_encoded}"
         )
 
         if repo_response.status_code != 200
@@ -277,9 +277,9 @@ end
 
 def fetch_codeberg_info(repo : String, name : String)
     begin
-        repo_encoded = URI.encode_www_form(repo)
+        repo_encoded  = URI.encode_www_form(repo)
         repo_response = HTTP::Client.get(
-        "https://codeberg.org/api/v1/repos/#{repo_encoded}"
+            "https://codeberg.org/api/v1/repos/#{repo_encoded}"
         )
 
         if repo_response.status_code != 200
