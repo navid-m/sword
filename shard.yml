@@ -1,11 +1,11 @@
 ---
-name: knife
+name: sword
 version: 0.1.0
 authors:
-- Navid M <navidmomtahen@gmail.com>
+   - Navid M <navidmomtahen@gmail.com>
 targets:
-  knife:
-    main: src/knife.cr
-crystal: '>= 1.14.0'
+   sword:
+      main: src/sword.cr
+crystal: ">= 1.14.0"
 license: MIT
 dependencies: {}
