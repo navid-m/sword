@@ -25,6 +25,39 @@ def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String,
     return {name: name, repo: repo, provider: provider}
 end
 
+def update_and_prune
+    if shards_available?
+        system("shards update")
+        system("shards prune")
+    else
+        puts "'Shards' executable not available in path, skipping update and prune."
+    end
+end
+
+def shards_available?
+    {% if flag?(:win32) || flag?(:windows) %}
+        process = Process.new(
+            "where", ["shards"], output: Process::Redirect::Pipe, error: Process::Redirect::Pipe
+        )
+        output = process.output.gets_to_end
+        status = process.wait
+        status.success? && !output.strip.empty?
+    {% else %}
+        process = Process.new(
+            "which", ["shards"], shell: true, output: Process::Redirect::Pipe, error: Process::Redirect::Pipe
+        )
+        output = process.output.gets_to_end
+        status = process.wait
+        status.success? && !output.strip.empty?
+    {% end %}
+end
+
+if ARGV.size == 1 && ARGV[0] == "up"
+    update_and_prune()
+    abort
+elsif ARGV.size != 2 || !(flag = ARGV[0]).in?({"get", "rm"})
+    abort "usage: sword get|rm|up <package-url>"
+end
 
 begin
     yaml_raw = YAML.parse(File.read(pkgfile))
@@ -36,22 +69,18 @@ yaml     = yaml_raw.as_h
 deps_key = YAML::Any.new("dependencies")
 deps     = yaml[deps_key]?.try(&.as_h) || {} of YAML::Any => YAML::Any
 
-if ARGV.size != 2 || !(flag = ARGV[0]).in?({"get", "rm"})
-    abort "usage: sword get|rm <package-url>"
-end
-
 flag = ARGV[0]
 url  = ARGV[1]
 dep  = git_url_to_dependency(url)
 dep_name_key = YAML::Any.new(dep[:name])
 
-if flag == "-get"
+if flag == "get"
     dep_entry = {YAML::Any.new(dep[:provider]) => YAML::Any.new(dep[:repo])}
     deps[dep_name_key] = YAML::Any.new(dep_entry)
     yaml[deps_key] = YAML::Any.new(deps)
     File.write(pkgfile, YAML::Any.new(yaml).to_yaml)
     puts "✅ Added dependency #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}."
-elsif flag == "-rm"
+elsif flag == "rm"
     if deps.delete(dep_name_key)
         yaml[deps_key] = YAML::Any.new(deps)
         File.write(pkgfile, YAML::Any.new(yaml).to_yaml)
