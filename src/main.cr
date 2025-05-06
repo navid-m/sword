@@ -34,17 +34,6 @@ def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String,
     return {name: name, repo: repo, provider: provider}
 end
 
-def build_project(args : Array(String) = [] of String)
-    if shards_available?
-        build_command = ["shards", "build"]
-        build_command.concat(args)
-        print_info "Building project with: #{build_command.join(" ")}"
-        system(build_command.join(" "))
-    else
-        print_error "shards executable not available in path, skipping build."
-    end
-end
-
 def load_shard_yml : Hash(YAML::Any, YAML::Any)
     begin
         yaml_raw = YAML.parse(File.read(PKGFILE))
@@ -74,7 +63,7 @@ def search_packages(query : String)
                     stars = item["stargazers_count"].as_i
                     url = item["html_url"].as_s
 
-                    puts "#{index + 1}. #{repo_name.colorize(:green)} (#{stars}⭐)"
+                    puts "#{index + 1}. #{repo_name.colorize(:green)} (#{stars})"
                     puts "   #{description}"
                     puts "   #{url.colorize(:blue)}"
                     puts ""
