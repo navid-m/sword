@@ -1,8 +1,8 @@
-### Sword
+## Sword
 
 CLI for simple and rapid management of Crystal projects.
 
-Navigate to your shards.yml:
+Navigate to the directory containing shards.yml:
 
 - `sword get <package-url> [version]` — Add a dependency
 - `sword rm <package-url>` — Remove a dependency
