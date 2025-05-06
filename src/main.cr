@@ -6,6 +6,7 @@ require "colorize"
 require "file_utils"
 require "../src/logs"
 require "../src/dirs"
+require "../src/inits"
 require "../src/shards_interop"
 
 PKGFILE     = "shard.yml"
@@ -112,76 +113,6 @@ def show_dependency_tree
     rescue ex
         print_error "Error parsing shard.lock: #{ex.message}"
     end
-end
-
-def init_project(name : String)
-    if Dir.exists?(name)
-        print_error "Directory '#{name}' already exists"
-        return
-    end
-
-    print_info "Initializing new project: #{name}"
-    Dir.mkdir_p(name)
-
-    %w(src spec).each do |dir|
-        Dir.mkdir_p("#{name}/#{dir}")
-    end
-    File.write("#{name}/src/#{name}.cr", <<-CRYSTAL
-    module #{name.camelcase}
-      VERSION = "0.1.0"
-
-      # TODO: Add your code here
-    end
-    CRYSTAL
-    )
-    File.write("#{name}/spec/spec_helper.cr", <<-CRYSTAL
-    require "spec"
-    require "../src/#{name}"
-    CRYSTAL
-    )
-
-    File.write("#{name}/spec/#{name}_spec.cr", <<-CRYSTAL
-    require "./spec_helper"
-    describe #{name.camelcase} do
-      # TODO: Add tests here
-      it "works" do
-        #{name.camelcase}.should be_truthy
-      end
-    end
-    CRYSTAL
-    )
-
-    File.write("#{name}/shard.yml", <<-YAML
-    name: #{name}
-    version: 0.1.0
-
-    authors:
-      - Your Name <your.email@example.com>
-
-    description: |
-      A short description of #{name}
-
-    crystal: ">= 1.0.0"
-
-    development_dependencies:
-      ameba:
-        github: crystal-ameba/ameba
-
-    license: MIT
-    YAML
-    )
-
-    File.write("#{name}/.gitignore", <<-GITIGNORE
-    /docs/
-    /lib/
-    /bin/
-    /.shards/
-    *.dwarf
-    GITIGNORE
-    )
-
-    print_success "Project created in ./#{name}/"
-    print_info "Run 'cd #{name} && sword build' to build your project"
 end
 
 def add_dependency(url : String, version : String? = nil)
@@ -340,7 +271,7 @@ def fetch_gitlab_info(repo : String, name : String)
         puts "Name:         #{name}".colorize(:green)
         puts "Repository:   #{repo_data["web_url"].as_s}"
         puts "Description:  #{repo_data["description"].as_s? || "No description"}"
-        puts "Stars:        #{repo_data["star_count"].as_i} ⭐"
+        puts "Stars:        #{repo_data["star_count"].as_i}"
         puts "Forks:        #{repo_data["forks_count"].as_i}"
         puts "Open Issues:  #{repo_data["open_issues_count"].as_i}"
         puts "Last Updated: #{repo_data["last_activity_at"].as_s}"
@@ -372,7 +303,7 @@ def fetch_codeberg_info(repo : String, name : String)
         puts "Name:         #{name}".colorize(:green)
         puts "Repository:   #{repo_data["html_url"].as_s}"
         puts "Description:  #{repo_data["description"].as_s? || "No description"}"
-        puts "Stars:        #{repo_data["stars_count"].as_i} ⭐"
+        puts "Stars:        #{repo_data["stars_count"].as_i}"
         puts "Forks:        #{repo_data["forks_count"].as_i}"
         puts "Open Issues:  #{repo_data["open_issues_count"].as_i}"
         puts "Last Updated: #{repo_data["updated_at"].as_s}"
