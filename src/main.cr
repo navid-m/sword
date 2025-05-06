@@ -6,7 +6,7 @@ require "colorize"
 require "file_utils"
 require "../src/logs"
 require "../src/dirs"
-require "../src/shard_interop"
+require "../src/shards_interop"
 
 PKGFILE     = "shard.yml"
 CACHEDIR    = File.join(get_home_directory, ".sword", "cache")
