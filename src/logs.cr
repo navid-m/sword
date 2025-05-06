@@ -1,5 +1,8 @@
 def print_title(title)
-  puts "=== #{title} ===".colorize(:cyan)
+  dash_line = "─" * 50
+  puts dash_line
+  puts "#{title}"
+  puts dash_line + "\n\n"
 end
 
 def print_success(message)
