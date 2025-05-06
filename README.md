@@ -1,6 +1,6 @@
-## Sword
+# Sword
 
-CLI for simple and rapid management of Crystal projects.
+CLI for rapid management of Crystal projects.
 
 Navigate to the directory containing shards.yml:
 
