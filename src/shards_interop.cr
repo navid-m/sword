@@ -19,6 +19,17 @@ def update_and_prune
     end
 end
 
+def build_project(args : Array(String) = [] of String)
+    if shards_available?
+        build_command = ["shards", "build"]
+        build_command.concat(args)
+        print_info "Building project with: #{build_command.join(" ")}"
+        system(build_command.join(" "))
+    else
+        print_error "shards executable not available in path, skipping build."
+    end
+end
+
 def shards_available?
     {% if flag?(:win32) || flag?(:windows) %}
         process = Process.new(
