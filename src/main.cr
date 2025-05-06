@@ -36,8 +36,8 @@ yaml     = yaml_raw.as_h
 deps_key = YAML::Any.new("dependencies")
 deps     = yaml[deps_key]?.try(&.as_h) || {} of YAML::Any => YAML::Any
 
-if ARGV.size != 2 || !(flag = ARGV[0]).in?({"-get", "-rm"})
-    abort "usage: knife -get|-rm <package-url>"
+if ARGV.size != 2 || !(flag = ARGV[0]).in?({"get", "rm"})
+    abort "usage: sword get|rm <package-url>"
 end
 
 flag = ARGV[0]
