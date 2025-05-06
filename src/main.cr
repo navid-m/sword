@@ -12,7 +12,7 @@ def github_to_dependency(url : String) : NamedTuple(name: String, repo: String)
     end
     name = parts.last.downcase
     repo = "#{parts[0]}/#{parts[1]}"
-    {name: name, repo: repo}
+    return {name: name, repo: repo}
 end
 
 pkgfile = "shard.yml"
