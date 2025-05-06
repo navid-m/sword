@@ -33,6 +33,21 @@ def build_project(args : Array(String) = [] of String)
     end
 end
 
+def compile_single(source_file : String)
+    if shards_available?
+        build_command = ["crystal", "build"]
+        begin
+            if source_file.includes?(".cr")
+                build_command << source_file
+            else
+                build_command << source_file + ".cr"
+            end
+        rescue ex
+            abort "Could not compile #{source_file}: #{ex.message}"
+        end
+    end
+end
+
 def build_project_release
     build_project(["--release"])
 end

@@ -9,6 +9,7 @@ def show_help
     puts "  sword rm <package-url>".colorize(:yellow).to_s + " - Remove a dependency"
     puts "  sword up".colorize(:yellow).to_s + " - Update and prune dependencies"
     puts "  sword b [build-args]".colorize(:yellow).to_s + " - Build project"
+    puts "  sword c".colorize(:yellow).to_s + " - Compile a .cr to an executable"
     puts "  sword br".colorize(:yellow).to_s + " - Build project in release mode"
     puts "  sword bs".colorize(:yellow).to_s + " - Build project statically linked"
     puts "  sword search <query>".colorize(:yellow).to_s + " - Search for packages"

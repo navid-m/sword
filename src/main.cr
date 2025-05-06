@@ -339,6 +339,12 @@ when "search"
         exit 1
     end
     search_packages(ARGV[1])
+when "c"
+    if ARGV.size < 2
+        print_error "Usage: sword c <file.cr>"
+        exit 1
+    end
+    compile_single(ARGV[1])
 when "deps"
     show_dependency_tree()
 when "init"
