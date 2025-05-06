@@ -213,7 +213,7 @@ def fetch_github_info(repo : String, name : String)
                     shard_data["crystal"] = yaml["crystal"]?.try(&.as_s) || "Any"
                     shard_data["license"] = yaml["license"]?.try(&.as_s) || "Unknown"
                     shard_data["description"] = yaml["description"]?.try(&.as_s) || "No description"
-                rescue ex
+                rescue
                     # Continue...
                 end
             end
