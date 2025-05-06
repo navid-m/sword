@@ -2,7 +2,7 @@ require "yaml"
 require "uri"
 
 pkgfile = "shard.yml"
-hosts   = {
+HOSTS   = {
     "github.com"   => "github",
     "gitlab.com"   => "gitlab",
     "codeberg.org" => "codeberg"
@@ -10,7 +10,7 @@ hosts   = {
 
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
     uri = URI.parse(url)
-    provider = hosts[uri.host]?
+    provider = HOSTS[uri.host]?
     unless provider
         abort "Unsupported git host: #{uri.host}"
     end
@@ -71,16 +71,19 @@ deps     = yaml[deps_key]?.try(&.as_h) || {} of YAML::Any => YAML::Any
 flag     = ARGV[0]
 url      = ARGV[1]
 dep      = git_url_to_dependency(url)
+ran      = false
 
 dep_name_key = YAML::Any.new(dep[:name])
 
 if flag == "get"
+    ran = true
     dep_entry = {YAML::Any.new(dep[:provider]) => YAML::Any.new(dep[:repo])}
     deps[dep_name_key] = YAML::Any.new(dep_entry)
     yaml[deps_key] = YAML::Any.new(deps)
     File.write(pkgfile, YAML::Any.new(yaml).to_yaml)
     puts "✅ Added dependency #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}."
 elsif flag == "rm"
+    ran = true
     if deps.delete(dep_name_key)
         yaml[deps_key] = YAML::Any.new(deps)
         File.write(pkgfile, YAML::Any.new(yaml).to_yaml)
@@ -88,4 +91,8 @@ elsif flag == "rm"
     else
         puts "Dependency: #{dep[:name]} not found, nothing to remove."
     end
+end
+
+if ran && shards_available?
+    update_and_prune
 end
