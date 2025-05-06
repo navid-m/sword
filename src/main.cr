@@ -307,8 +307,6 @@ def fetch_codeberg_info(repo : String, name : String)
 end
 
 case ARGV[0]?
-when "up"
-    update_and_prune
 when "tidy"
     if !prune()
         print_error "Shards executable was not available, nothing tidied."
@@ -316,10 +314,6 @@ when "tidy"
 when "b"
     build_args = ARGV.size > 1 ? ARGV[1..] : [] of String
     build_project(build_args)
-when "br"
-    build_project_release
-when "bs"
-    build_project_static
 when "get"
     if ARGV.size < 2
         print_error "Usage: sword get <package-url> [version]"
@@ -345,10 +339,6 @@ when "c"
         exit 1
     end
     compile_single(ARGV[1])
-when "deps"
-    show_dependency_tree
-when "about"
-    show_about
 when "init"
     if ARGV.size < 2
         print_error "Usage: sword init <name>"
@@ -361,10 +351,20 @@ when "info"
         exit 1
     end
     fetch_shard_info(ARGV[1])
+when "up"
+    update_and_prune
+when "br"
+    build_project_release
+when "bs"
+    build_project_static
 when "clean"
     clean_cache
 when "version"
     show_version
+when "deps"
+    show_dependency_tree
+when "about"
+    show_about
 when "help", nil
     show_help
 else
