@@ -12,8 +12,12 @@ def update_and_prune
     if shards_available?
         print_info "Updating dependencies..."
         prune()
-        system("shards update")
-        print_success "Dependencies updated."
+        result = system("shards update")
+        if !result
+            print_error "Dependencies failed to update."
+        else
+            print_success "Dependencies updated."
+        end
     else
         print_error "shards executable not available in path, skipping update and prune."
     end
