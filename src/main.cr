@@ -68,10 +68,10 @@ end
 yaml     = yaml_raw.as_h
 deps_key = YAML::Any.new("dependencies")
 deps     = yaml[deps_key]?.try(&.as_h) || {} of YAML::Any => YAML::Any
+flag     = ARGV[0]
+url      = ARGV[1]
+dep      = git_url_to_dependency(url)
 
-flag = ARGV[0]
-url  = ARGV[1]
-dep  = git_url_to_dependency(url)
 dep_name_key = YAML::Any.new(dep[:name])
 
 if flag == "get"
