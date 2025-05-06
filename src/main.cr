@@ -30,7 +30,7 @@ def update_and_prune
         system("shards update")
         system("shards prune")
     else
-        puts "'Shards' executable not available in path, skipping update and prune."
+        puts "shards executable not available in path, skipping update and prune."
     end
 end
 
