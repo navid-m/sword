@@ -1,8 +1,8 @@
 require "yaml"
 require "uri"
 
-pkgfile         = "shard.yml"
-SUPPORTED_HOSTS = {
+pkgfile = "shard.yml"
+hosts   = {
     "github.com"   => "github",
     "gitlab.com"   => "gitlab",
     "codeberg.org" => "codeberg"
@@ -10,7 +10,7 @@ SUPPORTED_HOSTS = {
 
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
     uri = URI.parse(url)
-    provider = SUPPORTED_HOSTS[uri.host]?
+    provider = hosts[uri.host]?
     unless provider
         abort "Unsupported git host: #{uri.host}"
     end
