@@ -4,6 +4,8 @@ require "json"
 require "http/client"
 require "colorize"
 require "file_utils"
+require "../src/logs"
+require "../src/shard_interop"
 
 PKGFILE     = "shard.yml"
 CACHEDIR    = File.join(get_home_directory, ".sword", "cache")
@@ -30,26 +32,6 @@ def get_home_directory
     end
 end
 
-def print_title(title)
-  puts "=== #{title} ===".colorize(:cyan)
-end
-
-def print_success(message)
-  puts "✅ #{message}".colorize(:green)
-end
-
-def print_error(message)
-  puts "❌ #{message}".colorize(:red)
-end
-
-def print_info(message)
-  puts "ℹ️ #{message}".colorize(:blue)
-end
-
-def print_warning(message)
-  puts "⚠️ #{message}".colorize(:yellow)
-end
-
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
     uri = URI.parse(url)
     provider = HOSTS[uri.host]?
@@ -65,27 +47,6 @@ def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String,
     return {name: name, repo: repo, provider: provider}
 end
 
-def prune : Bool
-    if shards_available?
-        print_info "Pruning dependencies..."
-        system("shards prune")
-        print_success "Dependencies cleaned."
-        return true
-    end
-    false
-end
-
-def update_and_prune
-    if shards_available?
-        print_info "Updating dependencies..."
-        prune()
-        system("shards update")
-        print_success "Dependencies updated."
-    else
-        print_error "shards executable not available in path, skipping update and prune."
-    end
-end
-
 def build_project(args : Array(String) = [] of String)
     if shards_available?
         build_command = ["shards", "build"]
@@ -95,24 +56,6 @@ def build_project(args : Array(String) = [] of String)
     else
         print_error "shards executable not available in path, skipping build."
     end
-end
-
-def shards_available?
-    {% if flag?(:win32) || flag?(:windows) %}
-        process = Process.new(
-            "where", ["shards"], output: Process::Redirect::Pipe, error: Process::Redirect::Pipe
-        )
-        output = process.output.gets_to_end
-        status = process.wait
-        status.success? && !output.strip.empty?
-    {% else %}
-        process = Process.new(
-            "which", ["shards"], shell: true, output: Process::Redirect::Pipe, error: Process::Redirect::Pipe
-        )
-        output = process.output.gets_to_end
-        status = process.wait
-        status.success? && !output.strip.empty?
-    {% end %}
 end
 
 def load_shard_yml : Hash(YAML::Any, YAML::Any)
@@ -242,7 +185,6 @@ def init_project(name : String)
     YAML
     )
 
-    # Create .gitignore
     File.write("#{name}/.gitignore", <<-GITIGNORE
     /docs/
     /lib/
@@ -277,7 +219,6 @@ def add_dependency(url : String, version : String? = nil)
 
     print_success "Added dependency #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}#{version ? " with version #{version}" : ""}."
 
-    # Update dependencies
     if shards_available?
         update_and_prune
     end
@@ -295,8 +236,6 @@ def remove_dependency(url : String)
         yaml[deps_key] = YAML::Any.new(deps)
         File.write(PKGFILE, YAML::Any.new(yaml).to_yaml)
         print_success "Removed dependency #{dep[:name]}."
-
-        # Update dependencies
         if shards_available?
             update_and_prune
         end
