@@ -1,5 +1,5 @@
 def print_title(title)
-  dash_line = "─" * 50
+  dash_line = "─" * 64
   puts dash_line
   puts "#{title}"
   puts dash_line + "\n\n"

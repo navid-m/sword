@@ -346,7 +346,9 @@ when "c"
     end
     compile_single(ARGV[1])
 when "deps"
-    show_dependency_tree()
+    show_dependency_tree
+when "about"
+    show_about
 when "init"
     if ARGV.size < 2
         print_error "Usage: sword init <name>"

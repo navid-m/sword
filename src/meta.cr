@@ -1,5 +1,11 @@
 def show_version
-    print_info "sword v0.2.0\n(c) Navid M 2025\ngithub.com/navid-m\ngitlab.com/navid-m"
+    print_info "sword v0.2.0"
+end
+
+def show_about
+    show_version
+    puts "©️ Navid M 2025".colorize(:red)
+    puts "©️ https://github.com/navid-m".colorize(:red)
 end
 
 def show_help
@@ -17,5 +23,6 @@ def show_help
     puts "  sword info <shard-name>".colorize(:cyan).to_s + " - Show information about a shard"
     puts "  sword clean".colorize(:red).to_s + " - Clean cache"
     puts "  sword version".colorize(:red).to_s + " - Show version"
+    puts "  sword about".colorize(:red).to_s + " - Show about"
     puts "  sword help".colorize(:red).to_s + " - Show this help"
 end
