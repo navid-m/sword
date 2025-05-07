@@ -120,7 +120,7 @@ end
 def add_dependency(url : String, version : String? = nil)
     dep = git_url_to_dependency(url)
     print_info "Adding dependency: #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}"
-    lines                       = read_shard_yml()
+    lines                       = read_shard_yml
     dependencies_index          = -1
     dependencies_indentation    = ""
 
@@ -200,7 +200,7 @@ def remove_dependency(url : String)
     dep = git_url_to_dependency(url)
     print_info "Removing dependency: #{dep[:name]}"
 
-    lines = read_shard_yml()
+    lines = read_shard_yml
     dependencies_index = -1
 
     lines.each_with_index do |line, index|
