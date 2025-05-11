@@ -10,15 +10,62 @@ require "../src/inits"
 require "../src/meta"
 require "../src/shards_interop"
 
-PKGFILE     = "shard.yml"
-CACHEDIR    = File.join(get_home_directory, ".sword", "cache")
-HOSTS       = {
+PKGFILE  = "shard.yml"
+CACHEDIR = File.join(get_home_directory, ".sword", "cache")
+HOSTS    = {
     "github.com"   => "github",
     "gitlab.com"   => "gitlab",
-    "codeberg.org" => "codeberg"
+    "codeberg.org" => "codeberg",
 }
 
 FileUtils.mkdir_p(CACHEDIR) unless Dir.exists?(CACHEDIR)
+
+def add_target_to_shard(target_name : String, source_file : String)
+    lines = read_shard_yml
+    targets_index = -1
+    targets_indentation = ""
+
+    lines.each_with_index do |line, index|
+        if line =~ /^(\s*)targets\s*:/
+            targets_index = index
+            targets_indentation = $1
+            break
+        end
+    end
+
+    if targets_index == -1
+        lines << "" if lines.last != ""
+        lines << "targets:"
+        targets_index = lines.size - 1
+        targets_indentation = ""
+    end
+
+    target_indentation = "#{targets_indentation}  "
+    main_indentation = "#{targets_indentation}    "
+    target_entry = [
+        "#{target_indentation}#{target_name}:",
+        "#{main_indentation}main: src/#{source_file}",
+    ]
+
+    existing_target_index = lines.index { |line| line =~ /^\s*#{Regex.escape(target_name)}\s*:/ }
+    if existing_target_index
+        print_warning "Target '#{target_name}' already exists in shard.yml."
+        return
+    end
+
+    insert_index = targets_index + 1
+    while insert_index < lines.size &&
+          (lines[insert_index].empty? || lines[insert_index].starts_with?("#") || lines[insert_index] =~ /^\s+/)
+        insert_index += 1
+    end
+
+    target_entry.each_with_index do |line, idx|
+        lines.insert(insert_index + idx, line)
+    end
+
+    write_shard_yml(lines)
+    print_success "Target '#{target_name}' added with main: src/#{source_file}"
+end
 
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
     uri = URI.parse(url)
@@ -120,9 +167,9 @@ end
 def add_dependency(url : String, version : String? = nil)
     dep = git_url_to_dependency(url)
     print_info "Adding dependency: #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}"
-    lines                       = read_shard_yml
-    dependencies_index          = -1
-    dependencies_indentation    = ""
+    lines = read_shard_yml
+    dependencies_index = -1
+    dependencies_indentation = ""
 
     lines.each_with_index do |line, index|
         if line =~ /^(\s*)dependencies\s*:/
@@ -160,7 +207,7 @@ def add_dependency(url : String, version : String? = nil)
         end
     end
 
-    dep_indentation  = "#{dependencies_indentation}  "
+    dep_indentation = "#{dependencies_indentation}  "
     prop_indentation = "#{dependencies_indentation}    "
 
     dep_lines = ["#{dep_indentation}#{dep_name}:"]
@@ -177,8 +224,8 @@ def add_dependency(url : String, version : String? = nil)
 
         while insert_index < lines.size &&
               (lines[insert_index].empty? ||
-               lines[insert_index].starts_with?("#") ||
-               lines[insert_index] =~ /^\s+/)
+              lines[insert_index].starts_with?("#") ||
+              lines[insert_index] =~ /^\s+/)
             insert_index += 1
         end
 
@@ -314,7 +361,7 @@ def fetch_github_info(repo : String, name : String)
             return
         end
 
-        repo_data        = JSON.parse(repo_response.body)
+        repo_data = JSON.parse(repo_response.body)
         content_response = HTTP::Client.get(
             "https://api.github.com/repos/#{repo}/contents/shard.yml",
             headers: HTTP::Headers{"Accept" => "application/vnd.github.v3+json"}
@@ -325,15 +372,15 @@ def fetch_github_info(repo : String, name : String)
             content = JSON.parse(content_response.body)
             if content["content"]?
                 begin
-                    decoded   = Base64.decode_string(content["content"].as_s)
-                    yaml      = YAML.parse(decoded)
+                    decoded = Base64.decode_string(content["content"].as_s)
+                    yaml = YAML.parse(decoded)
 
                     shard_data["version"] = yaml["version"]?.try(&.as_s) || "Unknown"
                     shard_data["crystal"] = yaml["crystal"]?.try(&.as_s) || "Any"
                     shard_data["license"] = yaml["license"]?.try(&.as_s) || "Unknown"
                     shard_data["description"] = yaml["description"]?.try(&.as_s) || "No description"
                 rescue
-                    # Continue...
+                  # Continue...
                 end
             end
         end
@@ -357,7 +404,6 @@ def fetch_github_info(repo : String, name : String)
 
         puts "\nTo add this package:"
         puts "  sword get #{repo_data["html_url"].as_s}".colorize(:yellow)
-
     rescue ex
         print_error "Error fetching information: #{ex.message}"
     end
@@ -388,7 +434,6 @@ def fetch_gitlab_info(repo : String, name : String)
 
         puts "\nTo add this package:"
         puts "  sword get #{repo_data["web_url"].as_s}".colorize(:yellow)
-
     rescue ex
         print_error "Error fetching information: #{ex.message}"
     end
@@ -396,7 +441,7 @@ end
 
 def fetch_codeberg_info(repo : String, name : String)
     begin
-        repo_encoded  = URI.encode_www_form(repo)
+        repo_encoded = URI.encode_www_form(repo)
         repo_response = HTTP::Client.get(
             "https://codeberg.org/api/v1/repos/#{repo_encoded}"
         )
@@ -419,7 +464,6 @@ def fetch_codeberg_info(repo : String, name : String)
 
         puts "\nTo add this package:"
         puts "  sword get #{repo_data["html_url"].as_s}".colorize(:yellow)
-
     rescue ex
         print_error "Error fetching information: #{ex.message}"
     end
@@ -470,6 +514,12 @@ when "info"
         exit 1
     end
     fetch_shard_info(ARGV[1])
+when "t"
+    if ARGV.size < 3
+        print_error "Usage: sword t <target_name> <source_file.cr>"
+        exit 1
+    end
+    add_target_to_shard(ARGV[1], ARGV[2])
 when "up"
     update_and_prune
 when "br"
