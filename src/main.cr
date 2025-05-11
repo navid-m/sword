@@ -186,6 +186,28 @@ def add_dependency(url : String, version : String? = nil)
         dependencies_indentation = ""
     end
 
+    existing_dep_indentation = ""
+    (dependencies_index + 1).upto(lines.size - 1) do |i|
+        break if i >= lines.size || (lines[i] =~ /^\S/ && !lines[i].starts_with?("#"))
+        if lines[i] =~ /^(\s+)\S+\s*:/
+            existing_dep_indentation = $1
+            break
+        end
+    end
+
+    dep_indentation = existing_dep_indentation.empty? ? "#{dependencies_indentation}   " : existing_dep_indentation
+
+    existing_prop_indentation = ""
+    (dependencies_index + 1).upto(lines.size - 1) do |i|
+        break if i >= lines.size || (lines[i] =~ /^\S/ && !lines[i].starts_with?("#"))
+        if lines[i] =~ /^(\s+)\S+\s*:/ && lines[i + 1]? && lines[i + 1] =~ /^(\s+)\S+:/
+            existing_prop_indentation = $1
+            break
+        end
+    end
+
+    prop_indentation = existing_prop_indentation.empty? ? "#{dep_indentation}   " : existing_prop_indentation
+
     dep_name = dep[:name]
     dep_start_index = -1
     dep_end_index = -1
@@ -206,9 +228,6 @@ def add_dependency(url : String, version : String? = nil)
             break
         end
     end
-
-    dep_indentation = "#{dependencies_indentation}  "
-    prop_indentation = "#{dependencies_indentation}    "
 
     dep_lines = ["#{dep_indentation}#{dep_name}:"]
     dep_lines << "#{prop_indentation}#{dep[:provider]}: #{dep[:repo]}"
