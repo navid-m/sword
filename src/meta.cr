@@ -13,6 +13,7 @@ def show_help
     puts "  sword get <package-url> <optional: version>".colorize(:blue).to_s + " - Add a dependency"
     puts "  sword rm <package-url>".colorize(:blue).to_s + " - Remove a dependency"
     puts "  sword up".colorize(:blue).to_s + " - Update and prune dependencies"
+    puts "  sword t <target-name> <source.cr>".colorize(:blue).to_s + " - Add build target to project"
     puts "  sword b <build-args>".colorize(:blue).to_s + " - Build project"
     puts "  sword br".colorize(:blue).to_s + " - Build project in release mode"
     puts "  sword bs".colorize(:blue).to_s + " - Build project statically linked"
