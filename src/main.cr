@@ -100,7 +100,9 @@ def read_shard_yml : Array(String)
 end
 
 def write_shard_yml(lines : Array(String))
-    File.write(PKGFILE, lines.join("\n"))
+    content = lines.join("\n")
+    content += "\r" unless content.ends_with?("\r")
+    File.write(PKGFILE, content)
 end
 
 def search_packages(query : String)
