@@ -1,5 +1,20 @@
 require "json"
 
+def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
+    uri = URI.parse(url)
+    provider = HOSTS[uri.host]?
+    unless provider
+        abort "Unsupported git host: #{uri.host}"
+    end
+    parts = uri.path.split("/").reject(&.empty?)
+    if parts.size < 2
+        abort "Invalid git URL format"
+    end
+    name = parts.last.downcase
+    repo = "#{parts[0]}/#{parts[1]}"
+    return {name: name, repo: repo, provider: provider}
+end
+
 def fetch_shard_info(url : String)
     dep = git_url_to_dependency(url)
     print_info "Fetching information for #{dep[:name]} from #{dep[:provider]}: #{dep[:repo]}"
