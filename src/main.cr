@@ -50,6 +50,10 @@ when "init"
         exit 1
     end
     init_project(ARGV[1])
+when "i"
+    init_minimal
+when "il"
+    init_library
 when "info"
     if ARGV.size < 2
         print_error "Usage: sword info <package-url>"

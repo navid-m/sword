@@ -60,6 +60,24 @@ def build_project_release_static
     build_project(["--release", "--static"])
 end
 
+def init_minimal
+    if shards_available?
+        print_info "Initializing minimal project with shards init"
+        system("shards init")
+    else
+        print_error "shards executable not available in path, cannot initialize project."
+    end
+end
+
+def init_library
+    if shards_available?
+        print_info "Initializing library project with shards init --type lib"
+        system("shards init --type lib")
+    else
+        print_error "shards executable not available in path, cannot initialize project."
+    end
+end
+
 def shards_available?
     {% if flag?(:win32) || flag?(:windows) %}
         process = Process.new(
