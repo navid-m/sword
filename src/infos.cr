@@ -191,7 +191,6 @@ def fetch_codeberg_info(repo : String, name : String)
         puts "Forks:        #{repo_data["forks_count"].as_i}"
         puts "Open Issues:  #{repo_data["open_issues_count"].as_i}"
         puts "Last Updated: #{repo_data["updated_at"].as_s}"
-
         puts "\nTo add this package:"
         puts "  sword get #{repo_data["html_url"].as_s}".colorize(:yellow)
     rescue ex
