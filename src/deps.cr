@@ -114,6 +114,9 @@ def add_dependency(url : String, version : String? = nil)
         if line =~ /^(\s*)dependencies\s*:/
             dependencies_index = index
             dependencies_indentation = $1
+            if line =~ /^(\s*)dependencies\s*:\s*\{\s*\}\s*$/
+                lines[index] = "#{$1}dependencies:"
+            end
             break
         end
     end

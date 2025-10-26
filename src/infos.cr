@@ -1,17 +1,27 @@
 require "json"
 
 def git_url_to_dependency(url : String) : NamedTuple(name: String, repo: String, provider: String)
-    uri = URI.parse(url)
-    provider = HOSTS[uri.host]?
-    unless provider
-        abort "Unsupported git host: #{uri.host}"
+    if url.includes?("://")
+        uri = URI.parse(url)
+        provider = HOSTS[uri.host]? || "github"
+        parts = uri.path.split("/").reject(&.empty?)
+        if parts.size < 2
+            abort "Invalid git URL format"
+        end
+        name = parts.last.downcase
+        repo = "#{parts[0]}/#{parts[1]}"
+    else
+        parts = url.split("/").reject(&.empty?)
+        if parts.size == 2
+            name = parts[1].downcase
+            repo = url
+        elsif parts.size == 1
+            abort "Specify the full repository path (e.g., owner/repo) or a full URL"
+        else
+            abort "Invalid repository format"
+        end
+        provider = "github"
     end
-    parts = uri.path.split("/").reject(&.empty?)
-    if parts.size < 2
-        abort "Invalid git URL format"
-    end
-    name = parts.last.downcase
-    repo = "#{parts[0]}/#{parts[1]}"
     return {name: name, repo: repo, provider: provider}
 end
 

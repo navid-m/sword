@@ -8,4 +8,3 @@ targets:
       main: src/sword.cr
 crystal: ">= 1.14.0"
 license: MIT
-dependencies: {}
