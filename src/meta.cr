@@ -1,5 +1,5 @@
 def show_version
-    print_info "sword " + Sword::VERSION
+    puts Sword::VERSION
 end
 
 def show_about

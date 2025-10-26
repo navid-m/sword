@@ -1,5 +1,5 @@
 module Sword
-    VERSION = "1.0.4"
+    VERSION = "1.0.5"
 end
 
 require "../src/main"
