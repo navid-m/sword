@@ -4,13 +4,13 @@ end
 
 def show_about
     show_version
-    puts "©️ Navid M 2025".colorize(:red)
-    puts "©️ https://github.com/navid-m".colorize(:red)
+    puts "By Navid M. (c) 2025".colorize(:red)
+    puts "https://github.com/navid-m".colorize(:red)
 end
 
 def show_help
     print_title "sword - usage"
-    puts "  sword get <package-url> <optional: version>".colorize(:blue).to_s + " - Add a dependency"
+    puts "  sword get|add <package-url> <optional: version>".colorize(:blue).to_s + " - Add a dependency"
     puts "  sword rm <package-url>".colorize(:blue).to_s + " - Remove a dependency"
     puts "  sword up".colorize(:blue).to_s + " - Update and prune dependencies"
     puts "  sword t <target-name> <source.cr>".colorize(:blue).to_s + " - Add build target to project"
