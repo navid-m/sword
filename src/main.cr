@@ -19,9 +19,9 @@ when "tidy"
 when "b"
     build_args = ARGV.size > 1 ? ARGV[1..] : [] of String
     build_project(build_args)
-when "get"
+when "get", "add"
     if ARGV.size < 2
-        print_error "Usage: sword get <package-url> [version]"
+        print_error "Usage: sword get|add <package-url> [version]"
         exit 1
     end
     version = ARGV[2]? if ARGV.size > 2
