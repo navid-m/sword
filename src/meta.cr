@@ -17,6 +17,7 @@ def show_help
     puts "  sword b <build-args>".colorize(:blue).to_s + " - Build project"
     puts "  sword br".colorize(:blue).to_s + " - Build project in release mode"
     puts "  sword bs".colorize(:blue).to_s + " - Build project statically linked"
+    puts "  sword brs".colorize(:blue).to_s + " - Build project in release mode and statically linked"
     puts "  sword init <name>".colorize(:blue).to_s + " - Initialize a new project"
     puts "  sword c <source-file>".colorize(:blue).to_s + " - Compile a .cr to an executable"
     puts "  sword search <query>".colorize(:cyan).to_s + " - Search for packages"

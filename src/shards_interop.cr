@@ -56,6 +56,10 @@ def build_project_static
     build_project(["--static"])
 end
 
+def build_project_release_static
+    build_project(["--release", "--static"])
+end
+
 def shards_available?
     {% if flag?(:win32) || flag?(:windows) %}
         process = Process.new(

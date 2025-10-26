@@ -68,6 +68,8 @@ when "br"
     build_project_release
 when "bs"
     build_project_static
+when "brs"
+    build_project_release_static
 when "clean"
     clean_cache
 when "version"
