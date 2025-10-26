@@ -9,7 +9,7 @@ def show_about
 end
 
 def show_help
-    print_title "sword - usage"
+    puts "usage: sword <command>\n\n"
     puts "  sword get|add <package-url> <optional: version>".colorize(:blue).to_s + " - Add a dependency"
     puts "  sword rm <package-url>".colorize(:blue).to_s + " - Remove a dependency"
     puts "  sword up".colorize(:blue).to_s + " - Update and prune dependencies"
